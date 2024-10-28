@@ -173,6 +173,8 @@ declare module "../../scene" {
         /** @internal */
         _createMultiviewUbo(): void;
         /** @internal */
+        _updateMultiviewMatrix(viewR?: Matrix, projectionR?: Matrix): void;
+        /** @internal */
         _updateMultiviewUbo(viewR?: Matrix, projectionR?: Matrix): void;
         /** @internal */
         _renderMultiviewToSingleView(camera: Camera): void;
@@ -202,16 +204,17 @@ Scene.prototype.createSceneUniformBuffer = function (name?: string): UniformBuff
     }
     return currentCreateSceneUniformBuffer.bind(this)(name);
 };
-Scene.prototype._updateMultiviewUbo = function (viewR?: Matrix, projectionR?: Matrix) {
+Scene.prototype._updateMultiviewMatrix = function (viewR?: Matrix, projectionR?: Matrix) {
     if (viewR && projectionR) {
         viewR.multiplyToRef(projectionR, this._transformMatrixR);
     }
-
     if (viewR && projectionR) {
         viewR.multiplyToRef(projectionR, TmpVectors.Matrix[0]);
         Frustum.GetRightPlaneToRef(TmpVectors.Matrix[0], this._frustumPlanes[3]); // Replace right plane by second camera right plane
     }
-
+};
+Scene.prototype._updateMultiviewUbo = function (viewR?: Matrix, projectionR?: Matrix) {
+    this._updateMultiviewMatrix(viewR, projectionR);
     if (this._multiviewSceneUbo) {
         this._multiviewSceneUbo.updateMatrix("viewProjection", this.getTransformMatrix());
         this._multiviewSceneUbo.updateMatrix("viewProjectionR", this._transformMatrixR);

@@ -1271,6 +1271,7 @@ export class Material implements IAnimatable, IClipPlanesHolder {
     public bindViewProjection(effect: Effect): void {
         if (!this._useUBO) {
             effect.setMatrix("viewProjection", this.getScene().getTransformMatrix());
+            effect.setMatrix("viewProjectionR", this.getScene().getTransformMatrixR());
             effect.setMatrix("projection", this.getScene().getProjectionMatrix());
         } else {
             this._needToBindSceneUbo = true;

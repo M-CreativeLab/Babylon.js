@@ -2349,6 +2349,14 @@ export class Scene extends AbstractScene implements IAnimatable, IClipPlanesHold
     }
 
     /**
+     * Gets the current view matrix (right eye)
+     * @returns a Matrix made of ViewR * ProjectionR
+     */
+    public getTransformMatrixR(): Matrix {
+        return this._transformMatrixR;
+    }
+
+    /**
      * Sets the current transform matrix
      * @param viewL defines the View matrix to use
      * @param projectionL defines the Projection matrix to use
@@ -2385,6 +2393,8 @@ export class Scene extends AbstractScene implements IAnimatable, IClipPlanesHold
             this._sceneUbo.updateMatrix("viewProjection", this._transformMatrix);
             this._sceneUbo.updateMatrix("view", this._viewMatrix);
             this._sceneUbo.updateMatrix("projection", this._projectionMatrix);
+        } else {
+            this._updateMultiviewMatrix(viewR, projectionR);
         }
     }
 

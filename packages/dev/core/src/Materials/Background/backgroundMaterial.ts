@@ -936,6 +936,7 @@ export class BackgroundMaterial extends PushMaterial {
                 "world",
                 "view",
                 "viewProjection",
+                "viewProjectionR",
                 "vEyePosition",
                 "vLightsType",
                 "vFogInfos",

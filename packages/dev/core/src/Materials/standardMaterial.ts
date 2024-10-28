@@ -1307,6 +1307,7 @@ export class StandardMaterial extends PushMaterial {
                 "world",
                 "view",
                 "viewProjection",
+                "viewProjectionR",
                 "vEyePosition",
                 "vLightsType",
                 "vAmbientColor",

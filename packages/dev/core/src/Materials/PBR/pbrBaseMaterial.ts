@@ -1357,6 +1357,7 @@ export abstract class PBRBaseMaterial extends PushMaterial {
             "world",
             "view",
             "viewProjection",
+            "viewProjectionR",
             "vEyePosition",
             "vLightsType",
             "vAmbientColor",
