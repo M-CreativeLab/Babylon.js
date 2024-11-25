@@ -13,7 +13,7 @@ import { WebXRTrackingState } from "./webXRTypes";
  * @see https://doc.babylonjs.com/features/featuresDeepDive/webXR/webXRCamera
  */
 export class WebXRCamera extends FreeCamera {
-    private static _ScaleReadOnly = Vector3.One();
+    // private static _ScaleReadOnly = Vector3.One();
 
     private _firstFrame = false;
     private _referenceQuaternion: Quaternion = Quaternion.Identity();
@@ -224,7 +224,13 @@ export class WebXRCamera extends FreeCamera {
     private _rotate180 = new Quaternion(0, 1, 0, 0);
 
     private _updateFromXRSession() {
-        const pose = this._xrSessionManager.currentFrame && this._xrSessionManager.currentFrame.getViewerPose(this._xrSessionManager.referenceSpace);
+        const xrFrame = this._xrSessionManager.currentFrame;
+        if (!xrFrame) {
+            this._setTrackingState(WebXRTrackingState.NOT_TRACKING);
+            return;
+        }
+
+        const pose = xrFrame.getViewerPose(this._xrSessionManager.referenceSpace);
         this._lastXRViewerPose = pose || undefined;
         if (!pose) {
             this._setTrackingState(WebXRTrackingState.NOT_TRACKING);
@@ -368,35 +374,35 @@ export class WebXRCamera extends FreeCamera {
 
     private _updateReferenceSpace() {
         // were position & rotation updated OUTSIDE of the xr update loop
-        if (!this.position.equals(this._referencedPosition) || !this.rotationQuaternion.equals(this._referenceQuaternion)) {
-            const referencedMat = TmpVectors.Matrix[0];
-            const poseMat = TmpVectors.Matrix[1];
-            const transformMat = TmpVectors.Matrix[2];
+        // if (!this.position.equals(this._referencedPosition) || !this.rotationQuaternion.equals(this._referenceQuaternion)) {
+        //     const referencedMat = TmpVectors.Matrix[0];
+        //     const poseMat = TmpVectors.Matrix[1];
+        //     const transformMat = TmpVectors.Matrix[2];
 
-            Matrix.ComposeToRef(WebXRCamera._ScaleReadOnly, this._referenceQuaternion, this._referencedPosition, referencedMat);
-            Matrix.ComposeToRef(WebXRCamera._ScaleReadOnly, this.rotationQuaternion, this.position, poseMat);
-            referencedMat.invert().multiplyToRef(poseMat, transformMat);
-            transformMat.invert();
+        //     Matrix.ComposeToRef(WebXRCamera._ScaleReadOnly, this._referenceQuaternion, this._referencedPosition, referencedMat);
+        //     Matrix.ComposeToRef(WebXRCamera._ScaleReadOnly, this.rotationQuaternion, this.position, poseMat);
+        //     referencedMat.invert().multiplyToRef(poseMat, transformMat);
+        //     transformMat.invert();
 
-            if (!this._scene.useRightHandedSystem) {
-                transformMat.toggleModelMatrixHandInPlace();
-            }
+        //     if (!this._scene.useRightHandedSystem) {
+        //         transformMat.toggleModelMatrixHandInPlace();
+        //     }
 
-            transformMat.decompose(undefined, this._referenceQuaternion, this._referencedPosition);
-            const transform = new XRRigidTransform(
-                {
-                    x: this._referencedPosition.x / this._xrSessionManager.worldScalingFactor,
-                    y: this._referencedPosition.y / this._xrSessionManager.worldScalingFactor,
-                    z: this._referencedPosition.z / this._xrSessionManager.worldScalingFactor,
-                },
-                {
-                    x: this._referenceQuaternion.x,
-                    y: this._referenceQuaternion.y,
-                    z: this._referenceQuaternion.z,
-                    w: this._referenceQuaternion.w,
-                }
-            );
-            this._xrSessionManager.referenceSpace = this._xrSessionManager.referenceSpace.getOffsetReferenceSpace(transform);
-        }
+        //     transformMat.decompose(undefined, this._referenceQuaternion, this._referencedPosition);
+        //     const transform = new XRRigidTransform(
+        //         {
+        //             x: this._referencedPosition.x / this._xrSessionManager.worldScalingFactor,
+        //             y: this._referencedPosition.y / this._xrSessionManager.worldScalingFactor,
+        //             z: this._referencedPosition.z / this._xrSessionManager.worldScalingFactor,
+        //         },
+        //         {
+        //             x: this._referenceQuaternion.x,
+        //             y: this._referenceQuaternion.y,
+        //             z: this._referenceQuaternion.z,
+        //             w: this._referenceQuaternion.w,
+        //         }
+        //     );
+        //     this._xrSessionManager.referenceSpace = this._xrSessionManager.referenceSpace.getOffsetReferenceSpace(transform);
+        // }
     }
 }

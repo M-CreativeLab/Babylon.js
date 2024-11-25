@@ -749,6 +749,7 @@ declare class XRWebGLLayer extends XRLayer {
     readonly framebuffer: WebGLFramebuffer;
     readonly framebufferWidth: number;
     readonly framebufferHeight: number;
+    readonly multiviewRequired: boolean;
 
     getViewport(view: XRView): XRViewport | undefined;
 }

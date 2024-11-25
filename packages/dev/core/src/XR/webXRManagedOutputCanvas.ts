@@ -12,6 +12,10 @@ import { WebXRWebGLLayerWrapper } from "./webXRWebGLLayer";
  */
 export class WebXRManagedOutputCanvasOptions {
     /**
+     * The WebGL rendering context.
+     */
+    public renderingContext?: WebGL2RenderingContext;
+    /**
      * An optional canvas in case you wish to create it yourself and provide it here.
      * If not provided, a new canvas will be created
      */
@@ -87,12 +91,20 @@ export class WebXRManagedOutputCanvas implements WebXRRenderTarget {
             this._engine = null;
         });
 
-        if (!_options.canvasElement) {
-            const canvas = document.createElement("canvas");
-            canvas.style.cssText = this._options.newCanvasCssStyle || "position:absolute; bottom:0px;right:0px;";
-            this._setManagedOutputCanvas(canvas);
+        if (_options.renderingContext) {
+            this.canvasContext = _options.renderingContext;
+            this._originalCanvasSize = {
+                width: this.canvasContext.drawingBufferWidth,
+                height: this.canvasContext.drawingBufferHeight,
+            };
         } else {
-            this._setManagedOutputCanvas(_options.canvasElement);
+            if (!_options.canvasElement) {
+                const canvas = document.createElement("canvas");
+                canvas.style.cssText = this._options.newCanvasCssStyle || "position:absolute; bottom:0px;right:0px;";
+                this._setManagedOutputCanvas(canvas);
+            } else {
+                this._setManagedOutputCanvas(_options.canvasElement);
+            }
         }
 
         _xrSessionManager.onXRSessionInit.add(() => {
