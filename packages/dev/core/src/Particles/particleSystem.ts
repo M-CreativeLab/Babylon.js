@@ -1809,6 +1809,10 @@ export class ParticleSystem extends BaseParticleSystem implements IDisposable, I
             this._imageProcessingConfiguration.prepareDefines(this._imageProcessingConfigurationDefines);
             defines.push(this._imageProcessingConfigurationDefines.toString());
         }
+
+        if (this._engine._caps.multiview || this._engine._caps.oculusMultiview) {
+            defines.push("#define MULTIVIEW");
+        }
     }
 
     /**
